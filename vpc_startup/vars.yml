@@ -1,0 +1,45 @@
+---
+
+###############
+# CREDENTIALS #
+###############
+
+aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY') }}"
+aws_secret_key: "{{ lookup('env', 'AWS_SECRET_KEY') }}"
+
+## Aussie AWS region
+
+aws_region:     "ap-southeast-2"
+
+#######
+# VPC #
+#######
+
+vpc_name:       "pizzanaki_vpc"
+vpc_cidr_block: "10.0.0.0/16"
+
+############################
+# Zone A: ap-southeast-2a  #
+############################
+
+# Subnets
+dmz_a_cidr:   "10.0.0.0/24"
+api_a_cidr:   "10.0.1.0/24"
+db_a_cidr:    "10.0.2.0/24"
+cache_a_cidr: "10.0.3.0/24"
+serv_a_cidr:  "10.0.4.0/24"
+web_a_cidr:   "10.0.5.0/24"
+tools_a_cidr: "10.0.6.0/24"
+
+############################
+# Zone B: ap-southeast-2b  #
+############################
+
+# Subnets
+dmz_b_cidr:   "10.0.10.0/24"
+api_b_cidr:   "10.0.11.0/24"
+db_b_cidr:    "10.0.12.0/24"
+cache_b_cidr: "10.0.13.0/24"
+serv_b_cidr:  "10.0.14.0/24"
+web_b_cidr:   "10.0.15.0/24"
+tools_b_cidr: "10.0.16.0/24"

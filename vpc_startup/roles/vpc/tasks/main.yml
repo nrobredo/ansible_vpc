@@ -1,0 +1,559 @@
+---
+
+#######
+# VPC #
+#######
+
+- name:               Create VPC PizzaNaki
+  ec2_vpc_net:
+    name:             "{{ vpc_name }}"
+    cidr_block:       "{{ vpc_cidr_block }}"
+    region:           "{{ aws_region }}"
+    aws_access_key:   "{{ aws_access_key }}"
+    aws_secret_key:   "{{ aws_secret_key }}"
+    state:            "present"
+  register: pizzanaki_vpc
+
+- name:               Set VPC ID in variable
+  set_fact:
+    vpc_id:           "{{ pizzanaki_vpc.vpc.id }}"
+
+##################
+# SUBNETS ZONE A #
+##################
+
+- name:               Create Public Subnet dmz_a on ap-southeast-2a
+  ec2_vpc_subnet:
+    state:            "present"
+    vpc_id:           "{{ vpc_id }}"
+    cidr:             "{{ dmz_a_cidr }}"
+    az:               "{{ aws_region }}a"
+    region:           "{{ aws_region }}"
+    aws_access_key:   "{{ aws_access_key }}"
+    aws_secret_key:   "{{ aws_secret_key }}"
+    resource_tags:
+      Name:           "dmz_a"
+  register: dmz_a
+
+- name:               Set Public Subnet ID in variable Zone A
+  set_fact:
+    dmz_a_id: "{{ dmz_a.subnet.id }}"
+
+- name:               Create Private Subnet api_a on ap-southeast-2a
+  ec2_vpc_subnet:
+    state:            "present"
+    vpc_id:           "{{ vpc_id }}"
+    cidr:             "{{ api_a_cidr }}"
+    az:               "{{ aws_region }}a"
+    region:           "{{ aws_region }}"
+    aws_access_key:   "{{ aws_access_key }}"
+    aws_secret_key:   "{{ aws_secret_key }}"
+    resource_tags:
+      Name:           "api_a"
+  register: api_a
+
+- name:               Set Private Subnet ID in variable Zone A
+  set_fact:
+    api_a_id: "{{ api_a.subnet.id }}"
+
+- name:               Create Private Subnet db_a on ap-southeast-2a
+  ec2_vpc_subnet:
+    state:            "present"
+    vpc_id:           "{{ vpc_id }}"
+    cidr:             "{{ db_a_cidr }}"
+    az:               "{{ aws_region }}a"
+    region:           "{{ aws_region }}"
+    aws_access_key:   "{{ aws_access_key }}"
+    aws_secret_key:   "{{ aws_secret_key }}"
+    resource_tags:
+      Name:           "db_a"
+  register: db_a
+
+- name:               Set Private Subnet ID in variable Zone A
+  set_fact:
+    db_a_id: "{{ db_a.subnet.id }}"
+
+- name:               Create Private Subnet cache_a on ap-southeast-2a
+  ec2_vpc_subnet:
+    state:            "present"
+    vpc_id:           "{{ vpc_id }}"
+    cidr:             "{{ cache_a_cidr }}"
+    az:               "{{ aws_region }}a"
+    region:           "{{ aws_region }}"
+    aws_access_key:   "{{ aws_access_key }}"
+    aws_secret_key:   "{{ aws_secret_key }}"
+    resource_tags:
+      Name:           "cache_a"
+  register: cache_a
+
+- name:               Set Private Subnet ID in variable Zone A
+  set_fact:
+    cache_a_id: "{{ cache_a.subnet.id }}"
+
+- name:               Create Private Subnet serv_a on ap-southeast-2a
+  ec2_vpc_subnet:
+    state:            "present"
+    vpc_id:           "{{ vpc_id }}"
+    cidr:             "{{ serv_a_cidr }}"
+    az:               "{{ aws_region }}a"
+    region:           "{{ aws_region }}"
+    aws_access_key:   "{{ aws_access_key }}"
+    aws_secret_key:   "{{ aws_secret_key }}"
+    resource_tags:
+      Name:           "serv_a"
+  register: serv_a
+
+- name:               Set Private Subnet ID in variable Zone A
+  set_fact:
+    serv_a_id: "{{ serv_a.subnet.id }}"
+
+- name:               Create Private Subnet web_a on ap-southeast-2a
+  ec2_vpc_subnet:
+    state:            "present"
+    vpc_id:           "{{ vpc_id }}"
+    cidr:             "{{ web_a_cidr }}"
+    az:               "{{ aws_region }}a"
+    region:           "{{ aws_region }}"
+    aws_access_key:   "{{ aws_access_key }}"
+    aws_secret_key:   "{{ aws_secret_key }}"
+    resource_tags:
+      Name:           "web_a"
+  register: web_a
+
+- name:               Set Private Subnet ID in variable Zone A
+  set_fact:
+    web_a_id: "{{ web_a.subnet.id }}"
+
+- name:               Create Private Subnet tools_a on ap-southeast-2a
+  ec2_vpc_subnet:
+    state:            "present"
+    vpc_id:           "{{ vpc_id }}"
+    cidr:             "{{ tools_a_cidr }}"
+    az:               "{{ aws_region }}a"
+    region:           "{{ aws_region }}"
+    aws_access_key:   "{{ aws_access_key }}"
+    aws_secret_key:   "{{ aws_secret_key }}"
+    resource_tags:
+      Name:           "tools_a"
+  register: tools_a
+
+- name:               Set Private Subnet ID in variable Zone A
+  set_fact:
+    tools_a_id: "{{ tools_a.subnet.id }}"
+
+##################
+# SUBNETS ZONE B #
+##################
+
+- name:               Create Public Subnet dmz_b on ap-southeast-2b
+  ec2_vpc_subnet:
+    state:            "present"
+    vpc_id:           "{{ vpc_id }}"
+    cidr:             "{{ dmz_b_cidr }}"
+    az:               "{{ aws_region }}b"
+    region:           "{{ aws_region }}"
+    aws_access_key:   "{{ aws_access_key }}"
+    aws_secret_key:   "{{ aws_secret_key }}"
+    resource_tags:
+      Name:           "dmz_b"
+  register: dmz_b
+
+- name:               Set Public Subnet ID in variable Zone B
+  set_fact:
+    dmz_b_id: "{{ dmz_b.subnet.id }}"
+
+- name:               Create Private Subnet api_a on ap-southeast-2b
+  ec2_vpc_subnet:
+    state:            "present"
+    vpc_id:           "{{ vpc_id }}"
+    cidr:             "{{ api_b_cidr }}"
+    az:               "{{ aws_region }}b"
+    region:           "{{ aws_region }}"
+    aws_access_key:   "{{ aws_access_key }}"
+    aws_secret_key:   "{{ aws_secret_key }}"
+    resource_tags:
+      Name:           "api_b"
+  register: api_b
+
+- name:               Set Private Subnet ID in variable Zone B
+  set_fact:
+    api_b_id: "{{ api_b.subnet.id }}"
+
+- name:               Create Private Subnet db_b on ap-southeast-2b
+  ec2_vpc_subnet:
+    state:            "present"
+    vpc_id:           "{{ vpc_id }}"
+    cidr:             "{{ db_b_cidr }}"
+    az:               "{{ aws_region }}b"
+    region:           "{{ aws_region }}"
+    aws_access_key:   "{{ aws_access_key }}"
+    aws_secret_key:   "{{ aws_secret_key }}"
+    resource_tags:
+      Name:           "db_b"
+  register: db_b
+
+- name:               Set Private Subnet ID in variable Zone B
+  set_fact:
+    db_b_id: "{{ db_b.subnet.id }}"
+
+- name:               Create Private Subnet cache_a on ap-southeast-2b
+  ec2_vpc_subnet:
+    state:            "present"
+    vpc_id:           "{{ vpc_id }}"
+    cidr:             "{{ cache_b_cidr }}"
+    az:               "{{ aws_region }}b"
+    region:           "{{ aws_region }}"
+    aws_access_key:   "{{ aws_access_key }}"
+    aws_secret_key:   "{{ aws_secret_key }}"
+    resource_tags:
+      Name:           "cache_b"
+  register: cache_b
+
+- name:               Set Private Subnet ID in variable Zone B
+  set_fact:
+    cache_b_id: "{{ cache_b.subnet.id }}"
+
+- name:               Create Private Subnet serv_a on ap-southeast-2b
+  ec2_vpc_subnet:
+    state:            "present"
+    vpc_id:           "{{ vpc_id }}"
+    cidr:             "{{ serv_b_cidr }}"
+    az:               "{{ aws_region }}b"
+    region:           "{{ aws_region }}"
+    aws_access_key:   "{{ aws_access_key }}"
+    aws_secret_key:   "{{ aws_secret_key }}"
+    resource_tags:
+      Name:           "serv_b"
+  register: serv_b
+
+- name:               Set Private Subnet ID in variable Zone B
+  set_fact:
+    serv_b_id: "{{ serv_b.subnet.id }}"
+
+- name:               Create Private Subnet web_b on ap-southeast-2b
+  ec2_vpc_subnet:
+    state:            "present"
+    vpc_id:           "{{ vpc_id }}"
+    cidr:             "{{ web_b_cidr }}"
+    az:               "{{ aws_region }}b"
+    region:           "{{ aws_region }}"
+    aws_access_key:   "{{ aws_access_key }}"
+    aws_secret_key:   "{{ aws_secret_key }}"
+    resource_tags:
+      Name:           "web_b"
+  register: web_b
+
+- name:               Set Private Subnet ID in variable Zone B
+  set_fact:
+    web_b_id: "{{ web_b.subnet.id }}"
+
+- name:               Create Private Subnet tools_b on ap-southeast-2b
+  ec2_vpc_subnet:
+    state:            "present"
+    vpc_id:           "{{ vpc_id }}"
+    cidr:             "{{ tools_b_cidr }}"
+    az:               "{{ aws_region }}b"
+    region:           "{{ aws_region }}"
+    aws_access_key:   "{{ aws_access_key }}"
+    aws_secret_key:   "{{ aws_secret_key }}"
+    resource_tags:
+      Name:           "tools_b"
+  register: tools_b
+
+- name:               Set Private Subnet ID in variable Zone B
+  set_fact:
+    tools_b_id: "{{ tools_b.subnet.id }}"
+
+##################
+# END OF SUBNETS #
+##################
+
+####################
+# INTERNET GATEWAY #
+####################
+
+- name:               Create Internet Gateway
+  ec2_vpc_igw:
+    vpc_id:           "{{ vpc_id }}"
+    region:           "{{ aws_region }}"
+    aws_access_key:   "{{ aws_access_key }}"
+    aws_secret_key:   "{{ aws_secret_key }}"
+    state:            "present"
+  register: pizzanaki_igw
+
+- name:               Save GW ID to variable
+  set_fact:
+    igw_id:           "{{ pizzanaki_igw.gateway_id }}"
+
+
+# Now we create two AWS Elastic IPs.
+# We will attach them to the two NAT Gateways.
+# That basically means that each AZ will have its own gateway,
+# and therefore your VPC will have 2 external IP addresses.
+
+- name: Setup AWS CLI (1/3)
+  shell: >
+    aws configure set aws_access_key_id "{{ aws_access_key }}"
+
+- name: Setup AWS CLI (2/3)
+  shell: >
+    aws configure set aws_secret_access_key "{{ aws_secret_key }}"
+
+- name: Setup AWS CLI (3/3)
+  shell: >
+    aws configure set region {{ aws_region }}
+
+- name: Create Elastic IP ZONE A
+  shell: >
+      aws ec2 allocate-address --domain vpc --query AllocationId | tr -d '"'
+  register: eip_zone_a
+
+- name: Set EIP in variable ZONE A
+  set_fact:
+    my_eip_zone_a: "{{ eip_zone_a.stdout }}"
+
+- name: Create Elastic IP ZONE B
+  shell: >
+      aws ec2 allocate-address --domain vpc --query AllocationId | tr -d '"'
+  register: eip_zone_b
+
+- name: Set EIP in variable ZONE B
+  set_fact:
+    my_eip_zone_b: "{{ eip_zone_b.stdout }}"
+
+################
+# NAT GATEWAYS #
+################
+
+- name: Create NAT Gateway ZONE A
+  shell: >
+    aws ec2 create-nat-gateway \
+    --subnet-id {{ dmz_a_id }} \
+    --allocation-id {{ my_eip_zone_a }} \
+    --query NatGateway.NatGatewayId | tr -d '"'
+  register: my_nat_gateway_a
+
+- name: Set Nat Gateway ID in variable ZONE A
+  set_fact:
+    nat_gateway_a_id: "{{ my_nat_gateway_a.stdout }}"
+
+- name: Create NAT Gateway ZONE B
+  shell: >
+    aws ec2 create-nat-gateway \
+    --subnet-id {{ dmz_b_id }} \
+    --allocation-id {{ my_eip_zone_b }} \
+    --query NatGateway.NatGatewayId | tr -d '"'
+  register: my_nat_gateway_b
+
+- name: Set Nat Gateway ID in variable ZONE B
+  set_fact:
+    nat_gateway_b_id: "{{ my_nat_gateway_b.stdout }}"
+
+
+# Pause for the Gateway start
+
+- pause: seconds=10
+
+
+##################
+# ROUTING TABLES #
+##################
+
+- name: Set up dmzs route table
+  ec2_vpc_route_table:
+    vpc_id: "{{ vpc_id }}"
+    region: "{{ aws_region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    tags:
+      Name: "Public"
+    subnets:
+      - "{{ dmz_a_id }}"
+      - "{{ dmz_b_id }}"
+    routes:
+      - dest: "0.0.0.0/0"
+        gateway_id: "{{ igw_id }}"
+
+- name: Set up private subnets route table for ZONE A
+  ec2_vpc_route_table:
+    vpc_id: "{{ vpc_id }}"
+    region: "{{ aws_region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    tags:
+      Name: "ZONE A private subnets routing table"
+    subnets:
+      - "{{ api_a_id }}"
+      - "{{ db_a_id }}"
+      - "{{ cache_a_id }}"
+      - "{{ serv_a_id }}"
+      - "{{ web_a_id }}"
+      - "{{ tools_a_id }}"
+    routes:
+      - dest: "0.0.0.0/0"
+        gateway_id: "{{ nat_gateway_a_id }}"
+
+- name: Set up private subnets route table for ZONE B
+  ec2_vpc_route_table:
+    vpc_id: "{{ vpc_id }}"
+    region: "{{ aws_region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    tags:
+      Name: "ZONE B private subnets routing table"
+    subnets:
+      - "{{ api_b_id }}"
+      - "{{ db_b_id }}"
+      - "{{ cache_b_id }}"
+      - "{{ serv_b_id }}"
+      - "{{ web_b_id }}"
+      - "{{ tools_b_id }}"
+    routes:
+      - dest: "0.0.0.0/0"
+        gateway_id: "{{ nat_gateway_b_id }}"
+
+
+###################
+# SECURITY GROUPS #
+###################
+
+- name: Create Public SSH Access Security Group
+  ec2_group:
+    name: "Public SSH Access"
+    description: "Public SSH Access SG"
+    vpc_id: "{{ vpc_id }}"
+    region: "{{ aws_region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    tags:
+      Name: "SG ssh from anywhere"
+    rules:
+      - proto: "tcp"
+        from_port: "22"
+        to_port: "22"
+        cidr_ip: "0.0.0.0/0"
+  register: sg_public_ssh
+
+- name: Set Main SG ID
+  set_fact:
+    main_sg_id: "{{ sg_public_ssh.group_id }}"
+
+- name: Create Private SSH Access Security Group
+  ec2_group:
+    name: "Private SSH Access SG"
+    description: "Private SSH Access SG"
+    vpc_id: "{{ vpc_id }}"
+    region: "{{ aws_region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    rules:
+      - proto: "tcp"
+        from_port: "22"
+        to_port: "22"
+        group_id: "{{ main_sg_id }}"
+
+- name: Create API Security Group
+  ec2_group:
+    name: "API port access SG"
+    description: "API port access SG"
+    vpc_id: "{{ vpc_id }}"
+    region: "{{ aws_region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    tags:
+      Name: "SG API"
+    rules:
+      - proto: "tcp"
+        from_port: "8080"
+        to_port: "8080"
+        cidr_ip: "10.0.0.0/16"
+  # register: sg_variable
+
+- name: Create DB Security Group
+  ec2_group:
+    name: "DB ports access SG"
+    description: "DB ports access SG"
+    vpc_id: "{{ vpc_id }}"
+    region: "{{ aws_region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    tags:
+      Name: "SG DB"
+    rules:
+      - proto: "tcp"
+        from_port: "27017"
+        to_port: "27019"
+        cidr_ip: "10.0.0.0/16"
+  # register: sg_variable
+
+- name: Create CACHE Security Group
+  ec2_group:
+    name: "CACHE ports access SG"
+    description: "CACHE ports access SG"
+    vpc_id: "{{ vpc_id }}"
+    region: "{{ aws_region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    tags:
+      Name: "SG CACHE"
+    rules:
+      - proto: "tcp"
+        from_port: "6379"
+        to_port: "6380"
+        cidr_ip: "10.0.0.0/16"
+  # register: sg_variable
+
+- name: Create SERVICES Security Group
+  ec2_group:
+    name: "SERVICES ports access SG"
+    description: "SERVICES ports access SG"
+    vpc_id: "{{ vpc_id }}"
+    region: "{{ aws_region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    tags:
+      Name: "SG SERVICES"
+    rules:
+      - proto: "tcp"
+        from_port: "8000"
+        to_port: "9000"
+        cidr_ip: "10.0.0.0/16"
+  # register: sg_variable
+
+- name: Create WEB Security Group
+  ec2_group:
+    name: "WEB ports access SG"
+    description: "WEB ports access SG"
+    vpc_id: "{{ vpc_id }}"
+    region: "{{ aws_region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    tags:
+      Name: "SG WEB"
+    rules:
+      - proto: "tcp"
+        from_port: "80"
+        to_port: "80"
+        cidr_ip: "10.0.0.0/16"
+  # register: sg_variable
+
+- name: Create TOOLS Security Group
+  ec2_group:
+    name: "TOOLS ports access SG"
+    description: "TOOLS ports access SG"
+    vpc_id: "{{ vpc_id }}"
+    region: "{{ aws_region }}"
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    tags:
+      Name: "TOOLS WEB"
+    rules:
+      - proto: "tcp"
+        from_port: "80"
+        to_port: "80"
+        cidr_ip: "10.0.0.0/16"
+      - proto: "tcp"
+        from_port: "8000"
+        to_port: "9000"
+        cidr_ip: "10.0.0.0/16"
+  # register: sg_variable
