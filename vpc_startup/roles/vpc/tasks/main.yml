@@ -537,3 +537,39 @@
         from_port: "8000"
         to_port: "9000"
         cidr_ip: "10.0.0.0/16"
+
+#######
+# ELB #
+#######
+
+- name: Create WEB ELB
+    module: ec2_elb_lb
+    name: "pizzanaki-com"
+    state: present
+    region:           "{{ aws_region }}"
+    aws_access_key:   "{{ aws_access_key }}"
+    aws_secret_key:   "{{ aws_secret_key }}"
+    subnets:
+      - "{{ web_a.subnet.id }}"
+      - "{{ web_b.subnet.id }}"
+    listeners:
+      - protocol: http
+        load_balancer_port: 80
+        instance_port: 80
+        proxy_protocol: True
+
+- name: Create API ELB
+  module: ec2_elb_lb
+  name: "api-pizzanaki-com"
+  state: present
+  region:           "{{ aws_region }}"
+  aws_access_key:   "{{ aws_access_key }}"
+  aws_secret_key:   "{{ aws_secret_key }}"
+  subnets:
+    - "{{ api_a.subnet.id }}"
+    - "{{ api_b.subnet.id }}"
+  listeners:
+    - protocol: http
+      load_balancer_port: 8080
+      instance_port: 8080
+      proxy_protocol: True
