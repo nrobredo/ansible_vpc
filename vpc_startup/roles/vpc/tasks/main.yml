@@ -286,10 +286,9 @@
     igw_id:           "{{ pizzanaki_igw.gateway_id }}"
 
 
-# Now we create two AWS Elastic IPs.
-# We will attach them to the two NAT Gateways.
-# That basically means that each AZ will have its own gateway,
-# and therefore your VPC will have 2 external IP addresses.
+#######
+# EIP #
+#######
 
 - name: Setup AWS CLI (1/3)
   shell: >
