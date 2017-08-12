@@ -543,7 +543,7 @@
 #######
 
 - name: Create WEB ELB
-    module: ec2_elb_lb
+  ec2_elb_lb:
     name: "pizzanaki-com"
     state: present
     region:           "{{ aws_region }}"
@@ -559,17 +559,17 @@
         proxy_protocol: True
 
 - name: Create API ELB
-  module: ec2_elb_lb
-  name: "api-pizzanaki-com"
-  state: present
-  region:           "{{ aws_region }}"
-  aws_access_key:   "{{ aws_access_key }}"
-  aws_secret_key:   "{{ aws_secret_key }}"
-  subnets:
-    - "{{ api_a.subnet.id }}"
-    - "{{ api_b.subnet.id }}"
-  listeners:
-    - protocol: http
-      load_balancer_port: 8080
-      instance_port: 8080
-      proxy_protocol: True
+  ec2_elb_lb:
+    name: "api-pizzanaki-com"
+    state: present
+    region:           "{{ aws_region }}"
+    aws_access_key:   "{{ aws_access_key }}"
+    aws_secret_key:   "{{ aws_secret_key }}"
+    subnets:
+      - "{{ api_a.subnet.id }}"
+      - "{{ api_b.subnet.id }}"
+    listeners:
+      - protocol: http
+        load_balancer_port: 8080
+        instance_port: 8080
+        proxy_protocol: True
