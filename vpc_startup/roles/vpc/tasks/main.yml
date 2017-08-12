@@ -424,8 +424,6 @@
     region: "{{ aws_region }}"
     aws_access_key: "{{ aws_access_key }}"
     aws_secret_key: "{{ aws_secret_key }}"
-    tags:
-      Name: "SG ssh from anywhere"
     rules:
       - proto: "tcp"
         from_port: "22"
@@ -459,14 +457,11 @@
     region: "{{ aws_region }}"
     aws_access_key: "{{ aws_access_key }}"
     aws_secret_key: "{{ aws_secret_key }}"
-    tags:
-      Name: "SG API"
     rules:
       - proto: "tcp"
         from_port: "8080"
         to_port: "8080"
         cidr_ip: "10.0.0.0/16"
-  # register: sg_variable
 
 - name: Create DB Security Group
   ec2_group:
@@ -476,14 +471,12 @@
     region: "{{ aws_region }}"
     aws_access_key: "{{ aws_access_key }}"
     aws_secret_key: "{{ aws_secret_key }}"
-    tags:
-      Name: "SG DB"
     rules:
       - proto: "tcp"
         from_port: "27017"
         to_port: "27019"
         cidr_ip: "10.0.0.0/16"
-  # register: sg_variable
+
 
 - name: Create CACHE Security Group
   ec2_group:
@@ -493,14 +486,11 @@
     region: "{{ aws_region }}"
     aws_access_key: "{{ aws_access_key }}"
     aws_secret_key: "{{ aws_secret_key }}"
-    tags:
-      Name: "SG CACHE"
     rules:
       - proto: "tcp"
         from_port: "6379"
         to_port: "6380"
         cidr_ip: "10.0.0.0/16"
-  # register: sg_variable
 
 - name: Create SERVICES Security Group
   ec2_group:
@@ -510,14 +500,11 @@
     region: "{{ aws_region }}"
     aws_access_key: "{{ aws_access_key }}"
     aws_secret_key: "{{ aws_secret_key }}"
-    tags:
-      Name: "SG SERVICES"
     rules:
       - proto: "tcp"
         from_port: "8000"
         to_port: "9000"
         cidr_ip: "10.0.0.0/16"
-  # register: sg_variable
 
 - name: Create WEB Security Group
   ec2_group:
@@ -527,14 +514,11 @@
     region: "{{ aws_region }}"
     aws_access_key: "{{ aws_access_key }}"
     aws_secret_key: "{{ aws_secret_key }}"
-    tags:
-      Name: "SG WEB"
     rules:
       - proto: "tcp"
         from_port: "80"
         to_port: "80"
         cidr_ip: "10.0.0.0/16"
-  # register: sg_variable
 
 - name: Create TOOLS Security Group
   ec2_group:
@@ -544,8 +528,6 @@
     region: "{{ aws_region }}"
     aws_access_key: "{{ aws_access_key }}"
     aws_secret_key: "{{ aws_secret_key }}"
-    tags:
-      Name: "TOOLS WEB"
     rules:
       - proto: "tcp"
         from_port: "80"
@@ -555,4 +537,3 @@
         from_port: "8000"
         to_port: "9000"
         cidr_ip: "10.0.0.0/16"
-  # register: sg_variable
