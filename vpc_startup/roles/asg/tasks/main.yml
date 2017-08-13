@@ -1,0 +1,58 @@
+---
+
+#######
+# ASG #
+#######
+
+- name: Create API Lunch Configuration
+  ec2_lc:
+    name: "api_lc"
+    image_id: ami-653d2506
+    key_name: "{{ my_key_name }}"
+    region: "{{ aws_region }}"
+    security_groups: sg-dd1dfdbb
+    instance_type: t2.micro
+    assign_public_ip: yes
+    instance_monitoring: yes
+    user_data: "{{ lookup('file', 'user_data.sh') }}"
+  register: my_lc
+
+- name: Create API Auto Scaling Group
+  ec2_asg:
+    name: api_asg
+    region: "{{ aws_region }}"
+    availability_zones: [ 'ap-southeast-2a', 'ap-southeast-2b' ]
+    vpc_zone_identifier: [ 'subnet-731f1517', 'subnet-e6724990' ]
+    load_balancers: "api-pizzanaki-com"
+    health_check_type: ELB
+    health_check_period: 300
+    launch_config_name: "api_lc"
+    replace_all_instances: yes
+    min_size: 2
+    max_size: 10
+    desired_capacity: 2
+    tags:
+      - environment: development
+        propagate_at_launch: no
+
+- name: Scale Out Policy
+  ec2_scaling_policy:
+    name: "API-ScaleOutPolicy"
+    region: "{{ aws_region }}"
+    state: present
+    adjustment_type: "ChangeInCapacity"
+    asg_name: "api_asg"
+    scaling_adjustment: "+1"
+    min_adjustment_step: "1"
+    cooldown: "180"
+
+- name: Scale In Policy
+  ec2_scaling_policy:
+    name: "API-ScaleInPolicy"
+    region: "{{ aws_region }}"
+    state: present
+    adjustment_type: "ChangeInCapacity"
+    asg_name: "api_asg"
+    scaling_adjustment: "-1"
+    min_adjustment_step: "1"
+    cooldown: "180"

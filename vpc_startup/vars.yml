@@ -43,3 +43,9 @@ cache_b_cidr: "10.0.13.0/24"
 serv_b_cidr:  "10.0.14.0/24"
 web_b_cidr:   "10.0.15.0/24"
 tools_b_cidr: "10.0.16.0/24"
+
+#############
+# KEY PAIRS #
+############
+
+my_key_name: "nrobredo"

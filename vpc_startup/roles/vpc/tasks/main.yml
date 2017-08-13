@@ -369,6 +369,12 @@
     subnets:
       - "{{ dmz_a_id }}"
       - "{{ dmz_b_id }}"
+      - "{{ api_a_id }}"
+      - "{{ api_b_id }}"
+      - "{{ tools_a_id }}"
+      - "{{ tools_b_id }}"
+      - "{{ web_a_id }}"
+      - "{{ web_b_id }}"
     routes:
       - dest: "0.0.0.0/0"
         gateway_id: "{{ igw_id }}"
@@ -382,12 +388,9 @@
     tags:
       Name: "ZONE A private subnets routing table"
     subnets:
-      - "{{ api_a_id }}"
       - "{{ db_a_id }}"
       - "{{ cache_a_id }}"
       - "{{ serv_a_id }}"
-      - "{{ web_a_id }}"
-      - "{{ tools_a_id }}"
     routes:
       - dest: "0.0.0.0/0"
         gateway_id: "{{ nat_gateway_a_id }}"
@@ -401,12 +404,9 @@
     tags:
       Name: "ZONE B private subnets routing table"
     subnets:
-      - "{{ api_b_id }}"
       - "{{ db_b_id }}"
       - "{{ cache_b_id }}"
       - "{{ serv_b_id }}"
-      - "{{ web_b_id }}"
-      - "{{ tools_b_id }}"
     routes:
       - dest: "0.0.0.0/0"
         gateway_id: "{{ nat_gateway_b_id }}"
@@ -459,8 +459,16 @@
     aws_secret_key: "{{ aws_secret_key }}"
     rules:
       - proto: "tcp"
+        from_port: "80"
+        to_port: "80"
+        cidr_ip: "10.0.0.0/16"
+      - proto: "tcp"
         from_port: "8080"
         to_port: "8080"
+        cidr_ip: "10.0.0.0/16"
+      - proto: "tcp"
+        from_port: "22"
+        to_port: "22"
         cidr_ip: "10.0.0.0/16"
 
 - name: Create DB Security Group
@@ -519,6 +527,11 @@
         from_port: "80"
         to_port: "80"
         cidr_ip: "10.0.0.0/16"
+    rules:
+      - proto: "tcp"
+        from_port: "22"
+        to_port: "22"
+        cidr_ip: "10.0.0.0/16"
 
 - name: Create TOOLS Security Group
   ec2_group:
@@ -530,13 +543,17 @@
     aws_secret_key: "{{ aws_secret_key }}"
     rules:
       - proto: "tcp"
+        from_port: "22"
+        to_port: "22"
+        cidr_ip: "0.0.0.0/16"
+      - proto: "tcp"
         from_port: "80"
         to_port: "80"
-        cidr_ip: "10.0.0.0/16"
+        cidr_ip: "0.0.0.0/16"
       - proto: "tcp"
         from_port: "8000"
         to_port: "9000"
-        cidr_ip: "10.0.0.0/16"
+        cidr_ip: "0.0.0.0/16"
 
 #######
 # ELB #
@@ -569,6 +586,10 @@
       - "{{ api_a.subnet.id }}"
       - "{{ api_b.subnet.id }}"
     listeners:
+      - protocol: http
+        load_balancer_port: 80
+        instance_port: 8080
+        proxy_protocol: True
       - protocol: http
         load_balancer_port: 8080
         instance_port: 8080
