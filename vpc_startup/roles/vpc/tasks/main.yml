@@ -499,6 +499,10 @@
         from_port: "6379"
         to_port: "6380"
         cidr_ip: "10.0.0.0/16"
+      - proto: "tcp"
+        from_port: "22"
+        to_port: "22"
+        cidr_ip: "0.0.0.0/0"
 
 - name: Create SERVICES Security Group
   ec2_group:
@@ -527,11 +531,10 @@
         from_port: "80"
         to_port: "80"
         cidr_ip: "10.0.0.0/16"
-    rules:
       - proto: "tcp"
         from_port: "22"
         to_port: "22"
-        cidr_ip: "10.0.0.0/16"
+        cidr_ip: "0.0.0.0/0"
 
 - name: Create TOOLS Security Group
   ec2_group:
@@ -574,6 +577,14 @@
         load_balancer_port: 80
         instance_port: 80
         proxy_protocol: True
+    health_check:
+      ping_protocol: http
+      ping_port: 80
+      ping_path: "/"
+      response_timeout: 10
+      interval: 30
+      unhealthy_threshold: 6
+      healthy_threshold: 2
 
 - name: Create API ELB
   ec2_elb_lb:
@@ -594,3 +605,11 @@
         load_balancer_port: 8080
         instance_port: 8080
         proxy_protocol: True
+    health_check:
+      ping_protocol: tcp
+      ping_port: 8080
+      ping_path: "/"
+      response_timeout: 10
+      interval: 30
+      unhealthy_threshold: 6
+      healthy_threshold: 2

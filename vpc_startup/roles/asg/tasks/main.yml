@@ -4,7 +4,7 @@
 # ASG #
 #######
 
-- name: Create API Lunch Configuration
+- name: Create API Launch Configuration
   ec2_lc:
     name: "api_lc"
     image_id: ami-653d2506
@@ -17,42 +17,89 @@
     user_data: "{{ lookup('file', 'user_data.sh') }}"
   register: my_lc
 
-- name: Create API Auto Scaling Group
+- name: Retrieve current Auto Scaling Group properties
+  command: "aws --region {{ aws_region }} autoscaling describe-auto-scaling-groups --auto-scaling-group-names api_asg"
+  register: asg_properties_result
+
+- name: Set asg_properties variable from JSON output if the Auto Scaling Group already exists
+  set_fact:
+    asg_properties: "{{ (asg_properties_result.stdout | from_json).AutoScalingGroups[0] }}"
+  when: (asg_properties_result.stdout | from_json).AutoScalingGroups | count
+
+- name: Configure Auto Scaling Group and perform rolling deploy
   ec2_asg:
-    name: api_asg
     region: "{{ aws_region }}"
+    name: api_asg
+    launch_config_name: "api_lc"
     availability_zones: [ 'ap-southeast-2a', 'ap-southeast-2b' ]
-    vpc_zone_identifier: [ 'subnet-731f1517', 'subnet-e6724990' ]
-    load_balancers: "api-pizzanaki-com"
     health_check_type: ELB
     health_check_period: 300
-    launch_config_name: "api_lc"
+    desired_capacity: "{{ asg_properties.DesiredCapacity | default(2) }}"
     replace_all_instances: yes
+    replace_batch_size: "{{ (asg_properties.DesiredCapacity | default(2) / 4) | round(0, 'ceil') | int }}"
     min_size: 2
     max_size: 10
-    desired_capacity: 2
-    tags:
-      - environment: development
-        propagate_at_launch: no
-
-- name: Scale Out Policy
-  ec2_scaling_policy:
-    name: "API-ScaleOutPolicy"
-    region: "{{ aws_region }}"
+    load_balancers: "api-pizzanaki-com"
     state: present
-    adjustment_type: "ChangeInCapacity"
-    asg_name: "api_asg"
-    scaling_adjustment: "+1"
-    min_adjustment_step: "1"
-    cooldown: "180"
 
-- name: Scale In Policy
+- name: Configure Scaling Policies
   ec2_scaling_policy:
-    name: "API-ScaleInPolicy"
     region: "{{ aws_region }}"
+    name: "{{ item.name }}"
+    asg_name: api_asg
     state: present
-    adjustment_type: "ChangeInCapacity"
-    asg_name: "api_asg"
-    scaling_adjustment: "-1"
-    min_adjustment_step: "1"
-    cooldown: "180"
+    adjustment_type: "{{ item.adjustment_type }}"
+    min_adjustment_step: "{{ item.min_adjustment_step }}"
+    scaling_adjustment: "{{ item.scaling_adjustment }}"
+    cooldown: "{{ item.cooldown }}"
+  with_items:
+    - name: "Increase Group Size"
+      adjustment_type: "ChangeInCapacity"
+      scaling_adjustment: +1
+      min_adjustment_step: 1
+      cooldown: 180
+    - name: "Decrease Group Size"
+      adjustment_type: "ChangeInCapacity"
+      scaling_adjustment: -1
+      min_adjustment_step: 1
+      cooldown: 300
+  register: sp_result
+
+- name: Configure Metric Alarms and link to Scaling Policies
+  ec2_metric_alarm:
+    region: "{{ aws_region }}"
+    name: "api_asg-ScaleUp"
+    state: present
+    metric: "CPUUtilization"
+    namespace: "AWS/EC2"
+    statistic: "Average"
+    comparison: ">="
+    threshold: 25.0
+    period: 60
+    evaluation_periods: 2
+    unit: "Percent"
+    dimensions:
+      AutoScalingGroupName: "api_asg"
+    alarm_actions: "{{ sp_result.results[0].arn }}"
+
+- name: Configure Metric Alarms and link to Scaling Policies
+  ec2_metric_alarm:
+    region: "{{ aws_region }}"
+    name: "api_asg-ScaleDown"
+    state: present
+    metric: "CPUUtilization"
+    namespace: "AWS/EC2"
+    statistic: "Average"
+    comparison: "<="
+    threshold: 10.0
+    period: 60
+    evaluation_periods: 2
+    unit: "Percent"
+    dimensions:
+      AutoScalingGroupName: "api_asg"
+    alarm_actions: "{{ sp_result.results[1].arn }}"
+
+#- name: Force termination of previous instances on ASG
+#  command: "aws --region {{ aws_region }} autoscaling terminate-instance-in-auto-scaling-group --instance-id "
+#
+#  instance_ids: '{{ asg_properties_result.AutoScalingGroups.Instances }}'

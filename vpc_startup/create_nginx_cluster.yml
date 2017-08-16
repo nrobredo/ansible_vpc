@@ -1,0 +1,13 @@
+
+---
+
+ - hosts: localhost
+   connection: local
+   gather_facts: false
+   user: root
+   pre_tasks:
+    - include_vars: roles/provision_webservers/vars/webservers.yml
+   roles:
+    - provision_webservers
+
+# - nxing_stuff + elb
