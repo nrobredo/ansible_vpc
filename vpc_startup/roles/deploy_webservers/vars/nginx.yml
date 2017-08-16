@@ -1,0 +1,22 @@
+---
+
+###############
+# CREDENTIALS #
+###############
+
+aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY') }}"
+aws_secret_key: "{{ lookup('env', 'AWS_SECRET_KEY') }}"
+
+#################
+# INSTANCE VARS #
+#################
+
+my_key_name: "nrobredo"
+ec2_security_group: "sg-cc1cfcaa"
+ec2_instance_type: "t2.micro"
+ec2_image: "ami-ae160ecd"
+aws_region:     "ap-southeast-2"
+ec2_tag_Name: "webserver-nginx"
+ec2_tag_Type: "webserver"
+ec2_tag_Environment: "development"
+ec2_volume_size: 8

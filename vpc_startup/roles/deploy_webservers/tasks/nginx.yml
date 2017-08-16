@@ -1,0 +1,24 @@
+
+ - name: Install Nginx
+   yum: pkg=nginx state=installed update_cache=true
+   notify: restart nginx
+
+ - name: Upload default index.html for host
+   copy: src=index.html dest=/usr/share/nginx/html/ mode=0644
+
+
+# - name: Add a line in /etc/nginx/sites-available/default
+#   lineinfile: dest=/etc/nginx/sites-available/default
+#               regexp='# Only for nginx-naxsi'
+#               line='location /images {}'
+
+# - name: Create a directory called images
+#   file: path=/usr/share/nginx/html/images state=directory mode=0755
+
+# - name: Upload first image
+#   copy: src=~/Pictures/pic.jpeg dest=/usr/share/nginx/html/images/ mode=0644
+
+#
+#  handlers:
+#    - name: restart nginx
+#      service: name=nginx state=restarted

@@ -1,0 +1,32 @@
+---
+
+ - name: DEPLOY NGINX CLUSTER
+   hosts: webservers
+   gather_facts: false
+   remote_user: ec2-user
+   become: yes
+   pre_tasks:
+     - include_vars: roles/deploy_webservers/vars/nginx.yml
+
+     - name: Gathering ec2 facts
+       action: ec2_facts
+     - name: Instance De-register
+       local_action:
+         module: ec2_elb
+         ec2_elbs: pizzanaki-com
+         region: "{{ aws_region }}"
+         instance_id: "{{ ansible_ec2_instance_id }}"
+         state: absent
+   tasks:
+     - include: roles/deploy_webservers/tasks/nginx.yml
+       handlers:
+         - name: restart nginx
+           service: name=nginx state=restarted
+   post_tasks:
+     - name: Instance register
+       local_action:
+         module: ec2_elb
+         ec2_elbs: pizzanaki-com
+         region: "{{ aws_region }}"
+         instance_id: "{{ ansible_ec2_instance_id }}"
+         state: present

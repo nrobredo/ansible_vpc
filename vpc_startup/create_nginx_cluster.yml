@@ -9,5 +9,3 @@
     - include_vars: roles/provision_webservers/vars/webservers.yml
    roles:
     - provision_webservers
-
-# - nxing_stuff + elb
