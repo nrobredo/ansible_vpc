@@ -32,11 +32,12 @@
     name: api_asg
     launch_config_name: "api_lc"
     availability_zones: [ 'ap-southeast-2a', 'ap-southeast-2b' ]
+    vpc_zone_identifier: [ 'subnet-731f1517', 'subnet-e6724990' ]
     health_check_type: ELB
     health_check_period: 300
-    desired_capacity: "{{ asg_properties.DesiredCapacity | default(2) }}"
+    desired_capacity: 2
     replace_all_instances: yes
-    replace_batch_size: "{{ (asg_properties.DesiredCapacity | default(2) / 4) | round(0, 'ceil') | int }}"
+    replace_batch_size: 2
     min_size: 2
     max_size: 10
     load_balancers: "api-pizzanaki-com"
@@ -98,8 +99,3 @@
     dimensions:
       AutoScalingGroupName: "api_asg"
     alarm_actions: "{{ sp_result.results[1].arn }}"
-
-#- name: Force termination of previous instances on ASG
-#  command: "aws --region {{ aws_region }} autoscaling terminate-instance-in-auto-scaling-group --instance-id "
-#
-#  instance_ids: '{{ asg_properties_result.AutoScalingGroups.Instances }}'
