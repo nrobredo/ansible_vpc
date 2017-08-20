@@ -1,0 +1,11 @@
+---
+
+ - hosts: mongodb_a
+   gather_facts: false
+   remote_user: ec2-user
+   become: yes
+   tasks:
+     - name: Initialising replica set in mongo
+       command: mongo 10.0.2.212:27017 --eval "rs.initiate()"
+     - name: Initialising replica set in mongo
+       command: mongo --eval 'rs.add("10.0.12.223:27017")'

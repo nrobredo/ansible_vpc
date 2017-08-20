@@ -1,0 +1,37 @@
+
+ - name: Set repo file for mongodb
+   copy: src=mongodb-org-3.4.repo dest=/etc/yum.repos.d/mongodb-org-3.4.repo mode=0644
+
+ - name: Set repo file for mongodb
+   copy: src=mongod.conf dest=/etc/mongod.conf mode=0644
+
+ - name: Install mongodb
+   yum: pkg=mongodb-org state=installed update_cache=true
+   notify: restart mongodb
+
+ - group:
+     name: mongod
+     state: present
+
+ - user:
+     name: mongod
+     state: present
+
+ - name: Make data path for mongodb
+   file:
+     path: /data/mongo
+     state: directory
+     owner: mongod
+     group: mongod
+     mode: 0775
+     recurse: yes
+
+ - name: Make logs path for mongodb
+   file:
+     path: /data/log/mongodb
+     state: directory
+     owner: mongod
+     group: mongod
+     mode: 0775
+     recurse: yes
+

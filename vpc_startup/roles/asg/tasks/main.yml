@@ -26,6 +26,23 @@
     asg_properties: "{{ (asg_properties_result.stdout | from_json).AutoScalingGroups[0] }}"
   when: (asg_properties_result.stdout | from_json).AutoScalingGroups | count
 
+- name: Delete AutoScaling Group
+  ec2_asg:
+    region: "{{ aws_region }}"
+    name: api_asg
+    launch_config_name: "api_lc"
+    availability_zones: [ 'ap-southeast-2a', 'ap-southeast-2b' ]
+    vpc_zone_identifier: [ 'subnet-731f1517', 'subnet-e6724990' ]
+    health_check_type: ELB
+    health_check_period: 300
+    desired_capacity: 2
+    replace_all_instances: yes
+    replace_batch_size: 2
+    min_size: 2
+    max_size: 10
+    load_balancers: "api-pizzanaki-com"
+    state: absent
+
 - name: Configure Auto Scaling Group and perform rolling deploy
   ec2_asg:
     region: "{{ aws_region }}"
@@ -75,7 +92,7 @@
     namespace: "AWS/EC2"
     statistic: "Average"
     comparison: ">="
-    threshold: 25.0
+    threshold: 5.0
     period: 60
     evaluation_periods: 2
     unit: "Percent"
@@ -92,7 +109,7 @@
     namespace: "AWS/EC2"
     statistic: "Average"
     comparison: "<="
-    threshold: 10.0
+    threshold: 1.0
     period: 60
     evaluation_periods: 2
     unit: "Percent"

@@ -1,0 +1,24 @@
+
+- pam_limits:
+    domain: mongod
+    limit_type: hard
+    limit_item: nofile
+    value: 64000
+
+- pam_limits:
+    domain: mongod
+    limit_type: soft
+    limit_item: nofile
+    value: 64000
+
+- pam_limits:
+    domain: mongod
+    limit_type: hard
+    limit_item: nproc
+    value: 64000
+
+- pam_limits:
+    domain: mongod
+    limit_type: soft
+    limit_item: nproc
+    value: 64000

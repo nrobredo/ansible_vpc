@@ -1,0 +1,18 @@
+---
+
+ - name: DEPLOY MONGODB CLUSTER
+   hosts: dbservers
+   gather_facts: false
+   remote_user: ec2-user
+   become: yes
+   pre_tasks:
+     - include: roles/configure_mongodb/tasks/mongodb-pam-limits.yml
+     - name: Copy the huge pages disablement script
+       copy: src=roles/configure_mongodb/tasks/disable-transparent-hugepages dest=/etc/init.d/disable-transparent-hugepages mode=0755 backup=no force=yes
+     - name: Make sure the script runs at boot time
+       command: /sbin/chkconfig disable-transparent-hugepages on
+   tasks:
+     - include: roles/configure_mongodb/tasks/mongodb.yml
+       handlers:
+         - name: restart mongodb
+           service: name=mongod state=restarted

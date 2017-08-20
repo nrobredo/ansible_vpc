@@ -1,0 +1,54 @@
+---
+
+###############
+# DB A SUBNET #
+###############
+
+ - name: Provision Webserver on subnet DB A
+   local_action:
+     module: ec2
+     key_name: "{{ my_key_name }}"
+     group_id: "{{ ec2_security_group }}"
+     instance_type: "{{ ec2_instance_type }}"
+     image: "{{ ec2_image }}"
+     vpc_subnet_id: subnet-7d1f1519
+     region: "{{ aws_region }}"
+     instance_tags: '{"Name":"{{ec2_tag_Name}}","Type":"{{ec2_tag_Type}}","Environment":"{{ec2_tag_Environment}}"}'
+     assign_public_ip: yes
+     wait: true
+     count: "{{ instances_per_subnet }}"
+   register: my_ec2
+
+ - debug: var=item
+   with_items: "{{ my_ec2['instances'] }}"
+
+ - name: Wait for the instances to boot by checking the ssh port
+   wait_for: host={{item.public_ip}} port=22 delay=60 timeout=320 state=started
+   with_items: " {{ my_ec2.instances }}"
+
+
+###############
+# DB B SUBNET #
+###############
+
+ - name: Provision Webserver on subnet DB B
+   local_action:
+     module: ec2
+     key_name: "{{ my_key_name }}"
+     group_id: "{{ ec2_security_group }}"
+     instance_type: "{{ ec2_instance_type }}"
+     image: "{{ ec2_image }}"
+     vpc_subnet_id: subnet-e7724991
+     region: "{{ aws_region }}"
+     instance_tags: '{"Name":"{{ec2_tag_Name}}","Type":"{{ec2_tag_Type}}","Environment":"{{ec2_tag_Environment}}"}'
+     assign_public_ip: yes
+     wait: true
+     count: "{{ instances_per_subnet }}"
+   register: my_ec2
+
+ - debug: var=item
+   with_items: "{{ my_ec2['instances'] }}"
+
+ - name: Wait for the instances to boot by checking the ssh port
+   wait_for: host={{item.public_ip}} port=22 delay=60 timeout=320 state=started
+   with_items: " {{ my_ec2.instances }}"
